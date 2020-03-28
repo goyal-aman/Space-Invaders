@@ -1,5 +1,5 @@
 import pygame as pygame
-from ship import Ship
+from utilities import Character
 import colors
 pygame.init()
 
@@ -14,7 +14,7 @@ pygame.display.set_icon(icon)
 # ArcadeShip
 initialX, initialY = 250, 380
 ArcadeShipImg = pygame.image.load('./media/ShipImg.png')
-ArcadeShip = Ship(initialY, initialY, 50, 50, ArcadeShipImg)
+ArcadeShip = Character(initialY, initialY, 50, 50, ArcadeShipImg)
 ArcadeShip.Img = pygame.transform.scale(ArcadeShipImg, (50, 50))
 
 
