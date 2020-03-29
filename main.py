@@ -1,3 +1,4 @@
+from typing import List
 import pygame as pygame
 import random
 from utilities import Character, Enemy, Bullet
@@ -38,7 +39,7 @@ def remove_bullet(arr: list, bullet_index: int) -> None:
     arr.pop(bullet_index)
 
 
-def show_bullets():
+def ShowBullests():
     '''
      using  `all_bullets` list, to show bullets, and move
     '''
@@ -69,8 +70,9 @@ def ShowArcadeShip():
 # Enemies
 EnemyImg = pygame.image.load('./media/enemy32.png').convert_alpha()
 enemy = Enemy(32, 32, EnemyImg, win_width, win_height/2)
-no_of_enemy = 10 #win_width//enemy.width
-Enemy_list = [Enemy(32, 32, EnemyImg, win_width, win_height//3) for _ in range(no_of_enemy)]
+no_of_enemy = 10  # win_width//enemy.width
+Enemy_list = [Enemy(32, 32, EnemyImg, win_width, win_height//3)
+              for _ in range(no_of_enemy)]
 
 
 # Enemy Actions
@@ -79,7 +81,29 @@ def ShowEnemy():
         win.blit(enemy.Img, (enemy.posX, enemy.posY))
         enemy.move()
 
+# gameover function
+def gameOver(reason: str):
+    print(f"Game Over: {reason}")
 
+# checking collisions
+def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> bool:
+    '''
+    enemy_list : list of all Enemy Objects
+    bullet_list : list of all Bullet Object 
+    '''
+    for enemy_index, enemy in enumerate(enemy_list):
+        for bullet_index, bullet in enumerate(bullet_list):
+            if bullet.posX >= enemy.posX and bullet.posX <= enemy.posX+enemy.width:
+                if bullet.posY >= enemy.posY and bullet.posY <= enemy.posY+enemy.height:
+                    collided_enemy = enemy_list.pop(enemy_index)
+                    collided_bullet = bullet_list.pop(bullet_index)
+
+
+def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
+    for enemy_index, enemy in enumerate(enemy_list):
+        if enemy.posX >= Ship.posX and enemy.posX <= Ship.posX+Ship.width:
+            if enemy.posY >= Ship.posY and enemy.posY <= Ship.posY+Ship.height:
+                gameOver('Collision With Enemy')
 
 run = True
 while run:
@@ -114,7 +138,11 @@ while run:
             if ArcadeShip.posY + ArcadeShip.height < win_height:
                 ArcadeShip.move_down(ship_movement_rate)
 
-    show_bullets()
+    ShowBullests()
     ShowArcadeShip()
     ShowEnemy()
+
+    # enemy and bullet collison detection and action
+    BulletEnemyCollision(Enemy_list, all_bullets)
+    ShipEnemyCollision(Enemy_list, ArcadeShip)
     pygame.display.update()
