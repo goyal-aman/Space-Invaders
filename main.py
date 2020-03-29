@@ -1,6 +1,7 @@
 import pygame as pygame
 import random
-from utilities import Character, Enemy
+from utilities import Character, Enemy, Bullet
+import sys
 import colors
 pygame.init()
 
@@ -16,6 +17,41 @@ pygame.display.set_icon(icon)
 background = pygame.image.load('./media/background.jpg').convert_alpha()
 background = pygame.transform.scale(background, (win_width, win_height))
 
+# bullet
+bullet_img = pygame.image.load('./media/bullet.png').convert_alpha()
+
+# bullet Actions
+all_bullets = []
+
+
+def Fire_Bullet(posX, posY):
+    ''' 
+    @param:
+        posX, posY -> coordinates of bullet when fired 
+    doc:
+        Instance of bullet fired is added to all_bullet list
+    '''
+    posX += 24
+    all_bullets.append(Bullet(posX, posY, 16, 16, bullet_img))
+
+
+def remove_bullet(arr: list, bullet_index: int) -> None:
+    arr.pop(bullet_index)
+
+
+def show_bullets():
+    '''
+     using  `all_bullets` list, to show bullets, and move
+    '''
+    for index, bullet in enumerate(all_bullets):
+        win.blit(bullet.Img, (bullet.posX, bullet.posY))
+        # remove bullet from all_bullet when move out of frame
+        if bullet.posY + bullet.height < 0:
+            remove_bullet(all_bullets, index)
+        else:
+            bullet.move_up(1)
+
+
 # ArcadeShip
 initialX, initialY = 250, 380
 ArcadeShipImg = pygame.image.load('./media/shipimg64.png')
@@ -25,6 +61,8 @@ loop_rate = 1000
 ship_movement_rate = (1/loop_rate) * 3
 
 # ArcadeShip Actions
+
+
 def ShowArcadeShip():
     win.blit(ArcadeShip.Img, (ArcadeShip.posX, ArcadeShip.posY))
 
@@ -48,6 +86,12 @@ while run:
             quit()
             pygame.quit()
 
+        if event.type == pygame.KEYDOWN:
+
+            # if spacebar is pressed, fire bullet
+            if event.key == pygame.K_SPACE:
+                Fire_Bullet(ArcadeShip.posX, ArcadeShip.posY)
+
     # refreshing movement thousand time, for better movement
     # set loop_rate to 1,
     for _ in range(loop_rate):
@@ -66,6 +110,7 @@ while run:
             if ArcadeShip.posY + ArcadeShip.height < win_height:
                 ArcadeShip.move_down(ship_movement_rate)
 
+    show_bullets()
     enemy.move()
     ShowArcadeShip()
     ShowEnemy()
