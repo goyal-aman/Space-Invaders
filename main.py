@@ -4,13 +4,17 @@ from utilities import Character, Enemy
 import colors
 pygame.init()
 
-win_width, win_height = 500, 500
+win_width, win_height = 700, 500
 win = pygame.display.set_mode((win_width, win_height))
 
 # title and icon
 pygame.display.set_caption("Space Wars")
 icon = pygame.image.load('./media/game icon/alien.png')
 pygame.display.set_icon(icon)
+
+# background
+background = pygame.image.load('./media/background.jpg').convert_alpha()
+background = pygame.transform.scale(background, (win_width, win_height))
 
 # ArcadeShip
 initialX, initialY = 250, 380
@@ -35,11 +39,12 @@ def ShowEnemy():
 
 run = True
 while run:
+    win.fill(colors.Black)
+    win.blit(background, (0,0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit()
             pygame.quit()
-    win.fill(colors.Black)
 
     # refreshing movement thousand time, for better movement
     # set loop to 1, and remove move_right, move_left..etc parameters
