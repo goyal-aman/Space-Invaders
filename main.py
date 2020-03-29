@@ -21,6 +21,8 @@ initialX, initialY = 250, 380
 ArcadeShipImg = pygame.image.load('./media/shipimg64.png')
 ArcadeShip = Character(initialX, initialY, 64, 64, ArcadeShipImg)
 
+loop_rate = 1000
+ship_movement_rate = (1/loop_rate) * 3
 
 # ArcadeShip Actions
 def ShowArcadeShip():
@@ -40,30 +42,30 @@ def ShowEnemy():
 run = True
 while run:
     win.fill(colors.Black)
-    win.blit(background, (0,0))
+    win.blit(background, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit()
             pygame.quit()
 
     # refreshing movement thousand time, for better movement
-    # set loop to 1, and remove move_right, move_left..etc parameters
-    # for lower spec device
-    for _ in range(1000):
+    # set loop_rate to 1,
+    for _ in range(loop_rate):
         ''' arcade ship movement '''
         key_press = pygame.key.get_pressed()
         if key_press[pygame.K_RIGHT]:
             if ArcadeShip.posX + ArcadeShip.width < win_width:
-                ArcadeShip.move_right(0.003)
+                ArcadeShip.move_right(ship_movement_rate)
         if key_press[pygame.K_LEFT]:
             if ArcadeShip.posX > 0:
-                ArcadeShip.move_left(0.003)
+                ArcadeShip.move_left(ship_movement_rate)
         if key_press[pygame.K_UP]:
             if ArcadeShip.posY > 0:
-                ArcadeShip.move_up(0.003)
+                ArcadeShip.move_up(ship_movement_rate)
         if key_press[pygame.K_DOWN]:
             if ArcadeShip.posY + ArcadeShip.height < win_height:
-                ArcadeShip.move_down(0.003)
+                ArcadeShip.move_down(ship_movement_rate)
+
     enemy.move()
     ShowArcadeShip()
     ShowEnemy()
