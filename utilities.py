@@ -1,7 +1,3 @@
-import random
-import math
-
-
 class Character:
     '''
     posX, posY -> (x, y) cords
@@ -33,6 +29,8 @@ class Character:
 
 
 class Enemy:
+    import random
+    import math
     '''
     posX, posY -> (x, y) cords
     widht, height -> (width, height) of character
@@ -41,19 +39,20 @@ class Enemy:
     '''
 
     def __init__(self, width, height, character_img, Hrange, Vrange):
-        self.posX = random.randint(0, Hrange)
-        self.posY = random.randint(0, Vrange)
+        self.posX = self.random.randint(0, Hrange)
+        self.posY = self.random.randint(0, Vrange)
         self.width = width
         self.height = height
         self.Img = character_img
         self.Hrange = Hrange
         self.Vrange = Vrange
-        self.dx = random.random()*2
-        self.dy = None
+        self.dx = 0.3  # random.random()
+        self.dy = self.math.floor(self.width/2)
 
     def move(self):
-        if self.posX+self.width > self.Hrange:
+        # Horizontal movement logic
+        # print(self.posX, self.posY)
+        if self.posX+self.width > self.Hrange or self.posX <= 0:
             self.dx *= -1
-        if self.posX < 0:
-            self.dx *= -1
+            self.posY += self.dy
         self.posX += self.dx
