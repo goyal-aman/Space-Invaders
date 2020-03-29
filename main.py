@@ -1,7 +1,6 @@
 import pygame as pygame
 import random
 from utilities import Character, Enemy, Bullet
-import sys
 import colors
 pygame.init()
 
@@ -54,7 +53,7 @@ def show_bullets():
 
 # ArcadeShip
 initialX, initialY = 250, 380
-ArcadeShipImg = pygame.image.load('./media/shipimg64.png')
+ArcadeShipImg = pygame.image.load('./media/shipimg64.png').convert_alpha()
 ArcadeShip = Character(initialX, initialY, 64, 64, ArcadeShipImg)
 
 loop_rate = 1000
@@ -68,13 +67,18 @@ def ShowArcadeShip():
 
 
 # Enemies
-EnemyImg = pygame.image.load('./media/enemy32.png')
+EnemyImg = pygame.image.load('./media/enemy32.png').convert_alpha()
 enemy = Enemy(32, 32, EnemyImg, win_width, win_height/2)
+no_of_enemy = 10 #win_width//enemy.width
+Enemy_list = [Enemy(32, 32, EnemyImg, win_width, win_height//3) for _ in range(no_of_enemy)]
 
 
 # Enemy Actions
 def ShowEnemy():
-    win.blit(enemy.Img, (enemy.posX, enemy.posY))
+    for enemy in Enemy_list:
+        win.blit(enemy.Img, (enemy.posX, enemy.posY))
+        enemy.move()
+
 
 
 run = True
@@ -111,7 +115,6 @@ while run:
                 ArcadeShip.move_down(ship_movement_rate)
 
     show_bullets()
-    enemy.move()
     ShowArcadeShip()
     ShowEnemy()
     pygame.display.update()

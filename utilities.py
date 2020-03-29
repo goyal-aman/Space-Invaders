@@ -39,15 +39,15 @@ class Enemy:
     '''
 
     def __init__(self, width, height, character_img, Hrange, Vrange):
-        self.posX = self.random.randint(0, Hrange)
-        self.posY = self.random.randint(0, Vrange)
+        self.posX = (self.random.randint(width, Hrange-width)//width)*width
+        self.posY = (self.random.randint(0, Vrange)//height)*height
         self.width = width
         self.height = height
         self.Img = character_img
         self.Hrange = Hrange
         self.Vrange = Vrange
-        self.dx = 0.3  # random.random()
-        self.dy = self.math.floor(self.width/2)
+        self.dx = self.random.randint(5, 10)/10
+        self.dy = self.math.floor(self.width)
 
     def move(self):
         # Horizontal movement logic
