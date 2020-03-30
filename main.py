@@ -15,17 +15,33 @@ pygame.display.set_caption("Space Wars")
 icon = pygame.image.load('./media/image/game icon/alien.png')
 pygame.display.set_icon(icon)
 
-# background
+# Background Image
 background = pygame.image.load('./media/image/Background.jpg').convert_alpha()
 background = pygame.transform.scale(background, (win_width, win_height))
 
 
 
-# bullet
-bullet_img = pygame.image.load('./media/image/bullet.png').convert_alpha()
+# BackGround Music
+pygame.mixer.music.load('./media/music/background.wav')
+play_background_music = True
+play_sound_effect = True
+if play_background_music:
+    pygame.mixer.music.play(-1)
 
-# bullet Actions
+# Sound Effects
+bullet_sound = pygame.mixer.Sound('./media/music/laser.wav')
+collision_sound = pygame.mixer.Sound('./media/music/explosion.wav')
+
+def PlaySound(sound_name:str, isplaying:bool):
+    if isplaying:
+        sound_name.play()
+
+
+
+# Bullet
+bullet_img = pygame.image.load('./media/image/bullet.png').convert_alpha()
 all_bullets = []
+
 def Fire_Bullet(posX, posY):
     '''
     @param:
@@ -34,6 +50,7 @@ def Fire_Bullet(posX, posY):
         Instance of bullet fired is added to all_bullet list
     '''
     posX += 24
+    PlaySound(bullet_sound, play_sound_effect)
     all_bullets.append(Bullet(posX, posY, 16, 16, bullet_img))
 
 def remove_bullet(arr: list, bullet_index: int) -> None:
@@ -52,6 +69,7 @@ def ShowBullests():
             bullet.move_up(4)
 
 
+
 # ArcadeShip
 initialX, initialY = 250, 380
 ArcadeShipImg = pygame.image.load('./media/image/shipimg64.png').convert_alpha()
@@ -60,9 +78,9 @@ ArcadeShip = Character(initialX, initialY, 64, 64, ArcadeShipImg)
 loop_rate = 1000
 ship_movement_rate = (1/loop_rate) * 3
 
-# ArcadeShip Actions
 def ShowArcadeShip():
     win.blit(ArcadeShip.Img, (ArcadeShip.posX, ArcadeShip.posY))
+
 
 
 # Enemies
@@ -79,13 +97,8 @@ def ShowEnemy():
         enemy.move()
 
 
-# gameover function
-def gameOver(reason: str):
-    print(f"Game Over: {reason}")
 
-
-
-# checking collisions
+# Collisions
 def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> bool:
     '''
     enemy_list : list of all Enemy Objects
@@ -95,6 +108,7 @@ def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> 
         for bullet_index, bullet in enumerate(bullet_list):
             if bullet.posX >= enemy.posX and bullet.posX <= enemy.posX+enemy.width:
                 if bullet.posY >= enemy.posY and bullet.posY <= enemy.posY+enemy.height:
+                    PlaySound(collision_sound, play_sound_effect)
                     collided_enemy = enemy_list.pop(enemy_index)
                     collided_bullet = bullet_list.pop(bullet_index)
                     ArcadeShip.increase_score()
@@ -106,6 +120,7 @@ def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
                 gameOver('Collision With Enemy')
 
 
+
 # message to print
 font = pygame.font.SysFont(None, 32, 0)
 def message_to_print(message: str, color: tuple, coordinates: tuple):
@@ -113,9 +128,15 @@ def message_to_print(message: str, color: tuple, coordinates: tuple):
     win.blit(text, coordinates)
 
 
+
+# gameover function
+def gameOver(reason: str):
+    print(f"Game Over: {reason}")
+
+
+# main game function
 run = True
 while run:
-    win.fill(colors.Black)
     win.blit(background, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
