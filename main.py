@@ -203,6 +203,7 @@ def WelcomeScreen():
         start_button.draw(win, (255, 255, 255))
         quit_button.draw(win, (255, 255, 255))
         pygame.display.update()
+
 # main game function
 def gameLoop():
     win.blit(background, (0,0))
@@ -233,12 +234,12 @@ def gameLoop():
             if key_press[pygame.K_LEFT]:
                 if ArcadeShip.posX > 0:
                     ArcadeShip.move_left(ship_movement_rate)
-            if key_press[pygame.K_UP]:
-                if ArcadeShip.posY > 0:
-                    ArcadeShip.move_up(ship_movement_rate)
-            if key_press[pygame.K_DOWN]:
-                if ArcadeShip.posY + ArcadeShip.height < win_height:
-                    ArcadeShip.move_down(ship_movement_rate)
+            # if key_press[pygame.K_UP]:
+            #     if ArcadeShip.posY > 0:
+            #         ArcadeShip.move_up(ship_movement_rate)
+            # if key_press[pygame.K_DOWN]:
+            #     if ArcadeShip.posY + ArcadeShip.height < win_height:
+            #         ArcadeShip.move_down(ship_movement_rate)
 
         ShowBullests()
         ShowArcadeShip()
@@ -256,4 +257,5 @@ def gameLoop():
         message_to_print(f"Level: {level}", colors.White, (win_width-100, 10))
 
         pygame.display.update()
+
 WelcomeScreen()
