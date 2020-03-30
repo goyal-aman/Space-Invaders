@@ -10,6 +10,7 @@ class Character:
         self.width = width
         self.height = height
         self.Img = character_img
+        self.score = 0
 
     def move_right(self, dx=0.1):
         self.posX += dx
@@ -27,6 +28,11 @@ class Character:
         self.posX += dx
         self.posY += dy
 
+    def increase_score(self, pnt=1):
+        self.score+=pnt
+    
+    def show_score(self):
+        return self.score
 
 class Enemy:
     import random
