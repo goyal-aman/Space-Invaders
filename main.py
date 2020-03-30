@@ -98,7 +98,16 @@ def ShowEnemy():
         win.blit(enemy.Img, (enemy.posX, enemy.posY))
         enemy.move()
 
-
+# Leveup
+level = 1
+def LevelUp():
+    global Enemy_list, no_of_enemy, level
+    if len(Enemy_list)==0:
+        level+=1
+        no_of_enemy = no_of_enemy+ no_of_enemy//2
+        Enemy_list = [newEnemy() for _ in range(no_of_enemy)]
+        ArcadeShip.posX = initialX
+        ArcadeShip.posY = initialY
 
 # Collisions
 def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> bool:
@@ -116,8 +125,8 @@ def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> 
                     ArcadeShip.increase_score()
 
                     # adding two more enemy for each enemy destroyed
-                    enemy_list.append(newEnemy())
-                    enemy_list.append(newEnemy())
+                    # enemy_list.append(newEnemy())
+                    # enemy_list.append(newEnemy())
 
 def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
     for enemy_index, enemy in enumerate(enemy_list):
@@ -137,6 +146,11 @@ def message_to_print(message: str, color: tuple, coordinates: tuple, bold=0):
 
 # gameover function
 def gameOver(reason: str):
+    win.blit(background, (0,0))
+    message_to_print(f"You Lost. Your Score: {ArcadeShip.show_score()}", colors.White, (25, 25))
+    message_to_print("Press any key to continue...", colors.White, (25,50))
+    pygame.display.update()
+    pygame.time.wait(2000)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -145,9 +159,6 @@ def gameOver(reason: str):
             if event.type == pygame.KEYDOWN:
                 pygame.quit()
 
-        win.blit(background, (0,0))
-        message_to_print(f"You Lost. Your Score: {ArcadeShip.show_score()}", colors.White, (25, 25))
-        message_to_print("Press any key to continue...", colors.White, (25,50))
 
         pygame.display.update()
     
@@ -233,6 +244,8 @@ def gameLoop():
         ShowArcadeShip()
         ShowEnemy()
 
+        LevelUp()
+
         # enemy and bullet collison detection and action
         BulletEnemyCollision(Enemy_list, all_bullets)
         if ShipEnemyCollision(Enemy_list, ArcadeShip):
@@ -240,6 +253,7 @@ def gameLoop():
         
         # showing scores
         message_to_print(f"Score: {ArcadeShip.show_score()}", colors.White, (10, 10))
-        
+        message_to_print(f"Level: {level}", colors.White, (win_width-100, 10))
+
         pygame.display.update()
 WelcomeScreen()
