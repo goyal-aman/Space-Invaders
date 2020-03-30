@@ -122,8 +122,8 @@ def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
 
 
 # message to print
-font = pygame.font.SysFont(None, 32, 0)
-def message_to_print(message: str, color: tuple, coordinates: tuple):
+def message_to_print(message: str, color: tuple, coordinates: tuple, bold=0):
+    font = pygame.font.SysFont(None, 32,bold)
     text = font.render(message, True, color)
     win.blit(text, coordinates)
 
@@ -175,6 +175,11 @@ def WelcomeScreen():
         pygame.display.update()
 # main game function
 def gameLoop():
+    win.blit(background, (0,0))
+    message_to_print('Destroy Most Enemies', colors.Red, (200, win_height//3), 1)
+    pygame.display.update()
+    pygame.time.wait(2000)
+
     run = True
     while run:
         win.blit(background, (0, 0))
