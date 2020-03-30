@@ -19,6 +19,8 @@ pygame.display.set_icon(icon)
 background = pygame.image.load('./media/image/Background.jpg').convert_alpha()
 background = pygame.transform.scale(background, (win_width, win_height))
 
+
+
 # bullet
 bullet_img = pygame.image.load('./media/image/bullet.png').convert_alpha()
 
@@ -103,6 +105,14 @@ def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
             if enemy.posY >= Ship.posY and enemy.posY <= Ship.posY+Ship.height:
                 gameOver('Collision With Enemy')
 
+
+# message to print
+font = pygame.font.SysFont(None, 32, 0)
+def message_to_print(message: str, color: tuple, coordinates: tuple):
+    text = font.render(message, True, color)
+    win.blit(text, coordinates)
+
+
 run = True
 while run:
     win.fill(colors.Black)
@@ -142,4 +152,8 @@ while run:
     # enemy and bullet collison detection and action
     BulletEnemyCollision(Enemy_list, all_bullets)
     ShipEnemyCollision(Enemy_list, ArcadeShip)
+    
+    # showing scores
+    message_to_print(f"Score: {ArcadeShip.show_score()}", colors.White, (10, 10))
+    
     pygame.display.update()
