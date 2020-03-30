@@ -1,3 +1,6 @@
+import pygame
+import colors
+
 class Character:
     '''
     posX, posY -> (x, y) cords
@@ -77,3 +80,34 @@ class Bullet(Character):
         Character.__init__(self, posX, posY, width, height, character_img)
         self.state = state
         self.dy = dy
+
+class Button:
+    def __init__(self,color, posX, posY, width, height, text='',size=32, left_offet=0, top_offset=0):
+        self.posX = posX
+        self.posY = posY
+        self.width = width
+        self.height = height
+        self.text = text
+        self.color = color
+        self.left_offet  = left_offet
+        self.top_offset = top_offset
+    
+    def draw(self,screen, outline_color=None):
+        if outline_color:
+            pygame.draw.rect(screen, outline_color, (self.posX-2, self.posY-2, self.width+4, self.height+4))
+        
+        pygame.draw.rect(screen, self.color, (self.posX, self.posY, self.width, self.height))
+
+        if self.text!='':
+            font = pygame.font.SysFont(None, 32)
+            text = font.render(self.text, 1, colors.Black)
+            screen.blit(text, (self.posX+self.left_offet, self.posY+self.top_offset))
+    
+    def ishover(self, pos):
+        ''' pos -> mouse position '''
+        if pos[0]>=self.posX and pos[0]<=self.posX+self.width:
+            if pos[1]>=self.posY and pos[1]<=self.posY+self.height:
+                return True
+        return False
+    
+        

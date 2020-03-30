@@ -2,7 +2,7 @@ from typing import List
 import pygame as pygame
 import sys
 import random
-from utilities import Character, Enemy, Bullet
+from utilities import Character, Enemy, Bullet, Button
 import colors
 pygame.init()
 
@@ -108,7 +108,7 @@ def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> 
         for bullet_index, bullet in enumerate(bullet_list):
             if bullet.posX >= enemy.posX and bullet.posX <= enemy.posX+enemy.width:
                 if bullet.posY >= enemy.posY and bullet.posY <= enemy.posY+enemy.height:
-                    PlaySound(collision_sound, play_sound_effect)
+                    # PlaySound(collision_sound, play_sound_effect)
                     collided_enemy = enemy_list.pop(enemy_index)
                     collided_bullet = bullet_list.pop(bullet_index)
                     ArcadeShip.increase_score()
@@ -134,47 +134,88 @@ def gameOver(reason: str):
     print(f"Game Over: {reason}")
 
 
-# main game function
-run = True
-while run:
-    win.blit(background, (0, 0))
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            quit()
-            pygame.quit()
-
-        if event.type == pygame.KEYDOWN:
-            # if spacebar is pressed, fire bullet
-            if event.key == pygame.K_SPACE:
-                Fire_Bullet(ArcadeShip.posX, ArcadeShip.posY)
-
-    # refreshing movement thousand time, for better movement
-    # set loop_rate to 1,
-    for _ in range(loop_rate):
-        ''' arcade ship movement '''
-        key_press = pygame.key.get_pressed()
-        if key_press[pygame.K_RIGHT]:
-            if ArcadeShip.posX + ArcadeShip.width < win_width:
-                ArcadeShip.move_right(ship_movement_rate)
-        if key_press[pygame.K_LEFT]:
-            if ArcadeShip.posX > 0:
-                ArcadeShip.move_left(ship_movement_rate)
-        if key_press[pygame.K_UP]:
-            if ArcadeShip.posY > 0:
-                ArcadeShip.move_up(ship_movement_rate)
-        if key_press[pygame.K_DOWN]:
-            if ArcadeShip.posY + ArcadeShip.height < win_height:
-                ArcadeShip.move_down(ship_movement_rate)
-
-    ShowBullests()
-    ShowArcadeShip()
-    ShowEnemy()
-
-    # enemy and bullet collison detection and action
-    BulletEnemyCollision(Enemy_list, all_bullets)
-    ShipEnemyCollision(Enemy_list, ArcadeShip)
-    
-    # showing scores
-    message_to_print(f"Score: {ArcadeShip.show_score()}", colors.White, (10, 10))
-    
+def WelcomeScreen():
+    win.blit(background, (0,0))
     pygame.display.update()
+    start_button = Button(colors.Lime, win_width//2-75, win_height//3, 159,50, 'Start',32,50, 15)
+    quit_button = Button(colors.Red, win_width//2-75, start_button.posY+start_button.height+2, 159,50, 'Quit',32, 50, 15)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            
+            # gets mouse position
+            mouse_pos = pygame.mouse.get_pos()
+
+            # start button
+            if start_button.ishover(mouse_pos):
+                start_button.color=colors.LimeGreen
+            else:
+                start_button.color=colors.Lime
+            
+            # quit button
+            if quit_button.ishover(mouse_pos):
+                quit_button.color=colors.FireBrick
+            else:
+                quit_button.color= colors.Red
+            
+
+
+            # mouse button click
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start_button.ishover(mouse_pos):
+                    pygame.time.wait(500)
+                    gameLoop()
+                if quit_button.ishover(mouse_pos):
+                    pygame.quit()
+            
+
+        start_button.draw(win, (255, 255, 255))
+        quit_button.draw(win, (255, 255, 255))
+        pygame.display.update()
+# main game function
+def gameLoop():
+    run = True
+    while run:
+        win.blit(background, (0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+                pygame.quit()
+
+            if event.type == pygame.KEYDOWN:
+                # if spacebar is pressed, fire bullet
+                if event.key == pygame.K_SPACE:
+                    Fire_Bullet(ArcadeShip.posX, ArcadeShip.posY)
+
+        # refreshing movement thousand time, for better movement
+        # set loop_rate to 1,
+        for _ in range(loop_rate):
+            ''' arcade ship movement '''
+            key_press = pygame.key.get_pressed()
+            if key_press[pygame.K_RIGHT]:
+                if ArcadeShip.posX + ArcadeShip.width < win_width:
+                    ArcadeShip.move_right(ship_movement_rate)
+            if key_press[pygame.K_LEFT]:
+                if ArcadeShip.posX > 0:
+                    ArcadeShip.move_left(ship_movement_rate)
+            if key_press[pygame.K_UP]:
+                if ArcadeShip.posY > 0:
+                    ArcadeShip.move_up(ship_movement_rate)
+            if key_press[pygame.K_DOWN]:
+                if ArcadeShip.posY + ArcadeShip.height < win_height:
+                    ArcadeShip.move_down(ship_movement_rate)
+
+        ShowBullests()
+        ShowArcadeShip()
+        ShowEnemy()
+
+        # enemy and bullet collison detection and action
+        BulletEnemyCollision(Enemy_list, all_bullets)
+        ShipEnemyCollision(Enemy_list, ArcadeShip)
+        
+        # showing scores
+        message_to_print(f"Score: {ArcadeShip.show_score()}", colors.White, (10, 10))
+        
+        pygame.display.update()
+WelcomeScreen()
