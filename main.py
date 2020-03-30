@@ -123,7 +123,7 @@ def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
     for enemy_index, enemy in enumerate(enemy_list):
         if enemy.posX >= Ship.posX and enemy.posX <= Ship.posX+Ship.width:
             if enemy.posY >= Ship.posY and enemy.posY <= Ship.posY+Ship.height:
-                gameOver('Collision With Enemy')
+                return True #gameOver('Collision With Enemy')
 
 
 
@@ -137,7 +137,20 @@ def message_to_print(message: str, color: tuple, coordinates: tuple, bold=0):
 
 # gameover function
 def gameOver(reason: str):
-    print(f"Game Over: {reason}")
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            if event.type == pygame.KEYDOWN:
+                pygame.quit()
+
+        win.blit(background, (0,0))
+        message_to_print(f"You Lost. Your Score: {ArcadeShip.show_score()}", colors.White, (25, 25))
+        message_to_print("Press any key to continue...", colors.White, (25,50))
+
+        pygame.display.update()
+    
 
 
 def WelcomeScreen():
@@ -198,7 +211,6 @@ def gameLoop():
                 # if spacebar is pressed, fire bullet
                 if event.key == pygame.K_SPACE:
                     Fire_Bullet(ArcadeShip.posX, ArcadeShip.posY)
-
         # refreshing movement thousand time, for better movement
         # set loop_rate to 1,
         for _ in range(loop_rate):
@@ -223,7 +235,8 @@ def gameLoop():
 
         # enemy and bullet collison detection and action
         BulletEnemyCollision(Enemy_list, all_bullets)
-        ShipEnemyCollision(Enemy_list, ArcadeShip)
+        if ShipEnemyCollision(Enemy_list, ArcadeShip):
+            gameOver("Collided with ship")
         
         # showing scores
         message_to_print(f"Score: {ArcadeShip.show_score()}", colors.White, (10, 10))
