@@ -1,43 +1,41 @@
 from typing import List
 import pygame as pygame
+import sys
 import random
 from utilities import Character, Enemy, Bullet
 import colors
 pygame.init()
 
+# window variable
 win_width, win_height = 700, 500
 win = pygame.display.set_mode((win_width, win_height))
 
 # title and icon
 pygame.display.set_caption("Space Wars")
-icon = pygame.image.load('./media/game icon/alien.png')
+icon = pygame.image.load('./media/image/game icon/alien.png')
 pygame.display.set_icon(icon)
 
 # background
-background = pygame.image.load('./media/background.jpg').convert_alpha()
+background = pygame.image.load('./media/image/Background.jpg').convert_alpha()
 background = pygame.transform.scale(background, (win_width, win_height))
 
 # bullet
-bullet_img = pygame.image.load('./media/bullet.png').convert_alpha()
+bullet_img = pygame.image.load('./media/image/bullet.png').convert_alpha()
 
 # bullet Actions
 all_bullets = []
-
-
 def Fire_Bullet(posX, posY):
-    ''' 
+    '''
     @param:
-        posX, posY -> coordinates of bullet when fired 
+        posX, posY -> coordinates of bullet when fired
     doc:
         Instance of bullet fired is added to all_bullet list
     '''
     posX += 24
     all_bullets.append(Bullet(posX, posY, 16, 16, bullet_img))
 
-
 def remove_bullet(arr: list, bullet_index: int) -> None:
     arr.pop(bullet_index)
-
 
 def ShowBullests():
     '''
@@ -49,31 +47,28 @@ def ShowBullests():
         if bullet.posY + bullet.height < 0:
             remove_bullet(all_bullets, index)
         else:
-            bullet.move_up(1)
+            bullet.move_up(4)
 
 
 # ArcadeShip
 initialX, initialY = 250, 380
-ArcadeShipImg = pygame.image.load('./media/shipimg64.png').convert_alpha()
+ArcadeShipImg = pygame.image.load('./media/image/shipimg64.png').convert_alpha()
 ArcadeShip = Character(initialX, initialY, 64, 64, ArcadeShipImg)
 
 loop_rate = 1000
 ship_movement_rate = (1/loop_rate) * 3
 
 # ArcadeShip Actions
-
-
 def ShowArcadeShip():
     win.blit(ArcadeShip.Img, (ArcadeShip.posX, ArcadeShip.posY))
 
 
 # Enemies
-EnemyImg = pygame.image.load('./media/enemy32.png').convert_alpha()
+EnemyImg = pygame.image.load('./media/image/enemy32.png').convert_alpha()
 enemy = Enemy(32, 32, EnemyImg, win_width, win_height/2)
 no_of_enemy = 10  # win_width//enemy.width
 Enemy_list = [Enemy(32, 32, EnemyImg, win_width, win_height//3)
               for _ in range(no_of_enemy)]
-
 
 # Enemy Actions
 def ShowEnemy():
@@ -81,15 +76,18 @@ def ShowEnemy():
         win.blit(enemy.Img, (enemy.posX, enemy.posY))
         enemy.move()
 
+
 # gameover function
 def gameOver(reason: str):
     print(f"Game Over: {reason}")
+
+
 
 # checking collisions
 def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> bool:
     '''
     enemy_list : list of all Enemy Objects
-    bullet_list : list of all Bullet Object 
+    bullet_list : list of all Bullet Object
     '''
     for enemy_index, enemy in enumerate(enemy_list):
         for bullet_index, bullet in enumerate(bullet_list):
@@ -97,7 +95,7 @@ def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> 
                 if bullet.posY >= enemy.posY and bullet.posY <= enemy.posY+enemy.height:
                     collided_enemy = enemy_list.pop(enemy_index)
                     collided_bullet = bullet_list.pop(bullet_index)
-
+                    ArcadeShip.increase_score()
 
 def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
     for enemy_index, enemy in enumerate(enemy_list):
@@ -115,7 +113,6 @@ while run:
             pygame.quit()
 
         if event.type == pygame.KEYDOWN:
-
             # if spacebar is pressed, fire bullet
             if event.key == pygame.K_SPACE:
                 Fire_Bullet(ArcadeShip.posX, ArcadeShip.posY)
