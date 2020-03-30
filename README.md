@@ -17,7 +17,7 @@ then activate the environment
 
 In bash
 ``` 
-./venv/Scripts/activate
+. venv/Scripts/activate
 ```
 
 In cmd
