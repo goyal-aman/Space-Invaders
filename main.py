@@ -85,10 +85,12 @@ def ShowArcadeShip():
 
 # Enemies
 EnemyImg = pygame.image.load('./media/image/enemy32.png').convert_alpha()
-enemy = Enemy(32, 32, EnemyImg, win_width, win_height/2)
+
+def newEnemy():
+    return Enemy(32, 32, EnemyImg, win_width, win_height/2)
+# enemy = Enemy(32, 32, EnemyImg, win_width, win_height/2)
 no_of_enemy = 10  # win_width//enemy.width
-Enemy_list = [Enemy(32, 32, EnemyImg, win_width, win_height//3)
-              for _ in range(no_of_enemy)]
+Enemy_list = [newEnemy() for _ in range(no_of_enemy)]
 
 # Enemy Actions
 def ShowEnemy():
@@ -112,6 +114,10 @@ def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> 
                     collided_enemy = enemy_list.pop(enemy_index)
                     collided_bullet = bullet_list.pop(bullet_index)
                     ArcadeShip.increase_score()
+
+                    # adding two more enemy for each enemy destroyed
+                    enemy_list.append(newEnemy())
+                    enemy_list.append(newEnemy())
 
 def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
     for enemy_index, enemy in enumerate(enemy_list):
