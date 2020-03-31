@@ -49,23 +49,27 @@ def Fire_Bullet(posX, posY):
     doc:
         Instance of bullet fired is added to all_bullet list
     '''
-    posX += 24
-    PlaySound(bullet_sound, play_sound_effect)
+    posX += 24  # centering bullet with respect to ship
+    PlaySound(bullet_sound, play_sound_effect)  # laser sound on bullet fire
     all_bullets.append(Bullet(posX, posY, 16, 16, bullet_img))
 
-def remove_bullet(arr: list, bullet_index: int) -> None:
-    arr.pop(bullet_index)
+def remove_bullet(all_bullet: list, bullet_index: int) -> None:
+    '''  Takes all_bullets list, and remove bullet object at bullet_index   '''
+    all_bullet.pop(bullet_index)
 
 def ShowBullests():
     '''
      using  `all_bullets` list, to show bullets, and move
+    
+    @algorithm:
+    -display all bullet object in all_bullets list
+    - remove them if they move out of frame or move them up
     '''
     for index, bullet in enumerate(all_bullets):
         win.blit(bullet.Img, (bullet.posX, bullet.posY))
-        # remove bullet from all_bullet when move out of frame
-        if bullet.posY + bullet.height < 0:
+        if bullet.posY + bullet.height < 0: 
             remove_bullet(all_bullets, index)
-        else:
+        else:   
             bullet.move_up(4)
 
 
@@ -87,13 +91,19 @@ def ShowArcadeShip():
 EnemyImg = pygame.image.load('./media/image/enemy32.png').convert_alpha()
 
 def newEnemy():
+    ''' returns new enemy object, with random (x,y) coords '''
     return Enemy(32, 32, EnemyImg, win_width, win_height/2)
-# enemy = Enemy(32, 32, EnemyImg, win_width, win_height/2)
+
 no_of_enemy = 10  # win_width//enemy.width
 Enemy_list = [newEnemy() for _ in range(no_of_enemy)]
 
 # Enemy Actions
 def ShowEnemy():
+    '''
+    @algorithm:
+    -show enemy object from `Enemy_list`
+    -move enemy 
+    '''
     for enemy in Enemy_list:
         win.blit(enemy.Img, (enemy.posX, enemy.posY))
         enemy.move()
@@ -101,6 +111,13 @@ def ShowEnemy():
 # Leveup
 level = 1
 def LevelUp():
+    '''
+    @algorithm:
+    -> if all enemies are destroyed ( len(Enemy_list)==0 )
+        then, add 50% more enemy, 
+              increment `level`
+              reset ArcadeShip to initial position
+    '''
     global Enemy_list, no_of_enemy, level
     if len(Enemy_list)==0:
         level+=1
@@ -114,6 +131,13 @@ def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> 
     '''
     enemy_list : list of all Enemy Objects
     bullet_list : list of all Bullet Object
+
+    @algorithm:
+    -check if any bullet has same coordinates as any enemy:
+        if yes:
+            remove enemy from enemy list
+            remove bullet from bullet list
+            increment score
     '''
     for enemy_index, enemy in enumerate(enemy_list):
         for bullet_index, bullet in enumerate(bullet_list):
@@ -129,6 +153,15 @@ def BulletEnemyCollision(enemy_list: List[Enemy], bullet_list: List[Bullet]) -> 
                     # enemy_list.append(newEnemy())
 
 def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
+    '''
+    enemy_list : list of all Enemy Objects
+    Ship : ArcadeShip object
+
+    @algorithm
+    -check if any enemy has same coordinates as ArcadeShip:
+        if yes:
+            return True
+    '''
     for enemy_index, enemy in enumerate(enemy_list):
         if enemy.posX >= Ship.posX and enemy.posX <= Ship.posX+Ship.width:
             if enemy.posY >= Ship.posY and enemy.posY <= Ship.posY+Ship.height:
@@ -138,6 +171,12 @@ def ShipEnemyCollision(enemy_list: List[Enemy], Ship: Character):
 
 # message to print
 def message_to_print(message: str, color: tuple, coordinates: tuple, bold=0):
+    '''
+    message : message to print
+    color   : color of the message | rgb
+    coordinates : (x,y) coordinates where to print/render
+    bold : default value 0 (no bold)
+    '''
     font = pygame.font.SysFont(None, 32,bold)
     text = font.render(message, True, color)
     win.blit(text, coordinates)
